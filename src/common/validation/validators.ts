@@ -5,6 +5,7 @@ import {
   IsOptional as IsOptionalBase,
   IsString as IsStringBase,
   IsUUID as IsUUIDBase,
+  Matches as MatchesBase,
   MaxLength as MaxLengthBase,
   MinLength as MinLengthBase,
 } from 'class-validator';
@@ -14,9 +15,10 @@ type PropertyDecoratorFn = (
   propertyKey: string | symbol,
 ) => void;
 
-export const IsEmail = IsEmailBase as (options?: {
+/** IsEmail passes the first arg as email format options and the second as validation options. */
+export const IsEmail = (options?: {
   message?: string;
-}) => PropertyDecoratorFn;
+}): PropertyDecoratorFn => IsEmailBase({}, options);
 export const IsNotEmpty = IsNotEmptyBase as (options?: {
   message?: string;
 }) => PropertyDecoratorFn;
@@ -24,6 +26,10 @@ export const IsOptional = IsOptionalBase as () => PropertyDecoratorFn;
 export const IsString = IsStringBase as () => PropertyDecoratorFn;
 export const IsUUID = IsUUIDBase as (
   version?: string,
+  options?: { message?: string },
+) => PropertyDecoratorFn;
+export const Matches = MatchesBase as (
+  pattern: RegExp,
   options?: { message?: string },
 ) => PropertyDecoratorFn;
 export const MaxLength = MaxLengthBase as (
