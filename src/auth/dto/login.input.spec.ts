@@ -6,7 +6,7 @@ describe('LoginInput validation', () => {
   function build(overrides: Partial<LoginInput> = {}): LoginInput {
     return plainToInstance(LoginInput, {
       email: 'user@example.com',
-      password: 'securePassword123',
+      password: 'Secure123!',
       ...overrides,
     });
   }
@@ -26,6 +26,16 @@ describe('LoginInput validation', () => {
     );
   });
 
+  it('should fail when email has no TLD', async () => {
+    const errors = await validate(build({ email: 'user@nodomain' }));
+    expect(errors.length).toBeGreaterThan(0);
+    const emailError = errors.find((e) => e.property === 'email');
+    expect(emailError).toBeDefined();
+    expect(Object.values(emailError!.constraints ?? {})).toContain(
+      'Email must include a valid domain with a top-level domain (e.g. user@example.com)',
+    );
+  });
+
   it('should fail when email is empty', async () => {
     const errors = await validate(build({ email: '' }));
     expect(errors.length).toBeGreaterThan(0);
@@ -34,7 +44,7 @@ describe('LoginInput validation', () => {
   });
 
   it('should fail when password is shorter than 8 characters', async () => {
-    const errors = await validate(build({ password: 'short' }));
+    const errors = await validate(build({ password: 'Sh0rt!' }));
     expect(errors.length).toBeGreaterThan(0);
     const passwordError = errors.find((e) => e.property === 'password');
     expect(passwordError).toBeDefined();
@@ -43,8 +53,28 @@ describe('LoginInput validation', () => {
     );
   });
 
-  it('should pass when password is exactly 8 characters', async () => {
-    const errors = await validate(build({ password: 'exactly8' }));
+  it('should fail when password has no number', async () => {
+    const errors = await validate(build({ password: 'NoNumber!' }));
+    expect(errors.length).toBeGreaterThan(0);
+    const passwordError = errors.find((e) => e.property === 'password');
+    expect(passwordError).toBeDefined();
+    expect(Object.values(passwordError!.constraints ?? {})).toContain(
+      'Password must contain at least 1 number and 1 special character',
+    );
+  });
+
+  it('should fail when password has no special character', async () => {
+    const errors = await validate(build({ password: 'NoSpecial1' }));
+    expect(errors.length).toBeGreaterThan(0);
+    const passwordError = errors.find((e) => e.property === 'password');
+    expect(passwordError).toBeDefined();
+    expect(Object.values(passwordError!.constraints ?? {})).toContain(
+      'Password must contain at least 1 number and 1 special character',
+    );
+  });
+
+  it('should pass when password meets all requirements', async () => {
+    const errors = await validate(build({ password: 'Valid1@pass' }));
     expect(errors).toHaveLength(0);
   });
 

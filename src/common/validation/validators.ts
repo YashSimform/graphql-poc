@@ -5,6 +5,7 @@ import {
   IsOptional as IsOptionalBase,
   IsString as IsStringBase,
   IsUUID as IsUUIDBase,
+  Matches as MatchesBase,
   MaxLength as MaxLengthBase,
   MinLength as MinLengthBase,
 } from 'class-validator';
@@ -25,6 +26,10 @@ export const IsOptional = IsOptionalBase as () => PropertyDecoratorFn;
 export const IsString = IsStringBase as () => PropertyDecoratorFn;
 export const IsUUID = IsUUIDBase as (
   version?: string,
+  options?: { message?: string },
+) => PropertyDecoratorFn;
+export const Matches = MatchesBase as (
+  pattern: RegExp,
   options?: { message?: string },
 ) => PropertyDecoratorFn;
 export const MaxLength = MaxLengthBase as (
