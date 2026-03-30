@@ -14,9 +14,10 @@ type PropertyDecoratorFn = (
   propertyKey: string | symbol,
 ) => void;
 
-export const IsEmail = IsEmailBase as (options?: {
+/** IsEmail passes the first arg as email format options and the second as validation options. */
+export const IsEmail = (options?: {
   message?: string;
-}) => PropertyDecoratorFn;
+}): PropertyDecoratorFn => IsEmailBase({}, options);
 export const IsNotEmpty = IsNotEmptyBase as (options?: {
   message?: string;
 }) => PropertyDecoratorFn;

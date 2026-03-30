@@ -2,7 +2,6 @@ import { InputType, Field } from '@nestjs/graphql';
 import {
   IsEmail,
   IsNotEmpty,
-  IsOptional,
   IsString,
   MinLength,
   MaxLength,
@@ -23,12 +22,10 @@ export class CreateUserInput {
   email: string;
 
   @Field(() => String, {
-    nullable: true,
-    description:
-      'Password for login (min 6 characters); required for login flow',
+    description: 'Password for the account (minimum 8 characters)',
   })
-  @IsOptional()
   @IsString()
-  @MinLength(6, { message: 'Password must be at least 6 characters' })
-  password?: string;
+  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(8, { message: 'Password must be at least 8 characters' })
+  password: string;
 }

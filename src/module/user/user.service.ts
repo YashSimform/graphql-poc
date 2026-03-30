@@ -19,7 +19,7 @@ import { SortOrder } from './inputs/user-order-by.input';
 interface CreateData {
   name: string;
   email: string;
-  password?: string;
+  password: string;
 }
 
 type PrismaWhere = Record<string, unknown>;
@@ -60,10 +60,11 @@ export class UserService {
   }
 
   async create(data: CreateUserInput): Promise<User> {
-    const createData: CreateData = { name: data.name, email: data.email };
-    if (data.password) {
-      createData.password = await bcrypt.hash(data.password, 10);
-    }
+    const createData: CreateData = {
+      name: data.name,
+      email: data.email,
+      password: await bcrypt.hash(data.password, 10),
+    };
     try {
       return await this.user.create({ data: createData });
     } catch (err) {
@@ -144,10 +145,8 @@ export class UserService {
       const createData: CreateData = {
         name: input.user.name,
         email: input.user.email,
+        password: await bcrypt.hash(input.user.password, 10),
       };
-      if (input.user.password) {
-        createData.password = await bcrypt.hash(input.user.password, 10);
-      }
       const user = await tx.user.create({ data: createData });
       if (input.posts?.length) {
         for (const p of input.posts) {
